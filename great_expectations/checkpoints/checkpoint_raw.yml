@@ -1,0 +1,29 @@
+# Checkpoint Great Expectations pour les données brutes OpenSky
+# Utilisé dans le DAG dag_ingest_flights.py 
+
+name: checkpoint_raw
+config_version: 1.0
+class_name: SimpleCheckpoint
+run_name_template: "%Y%m%d-%H%M%S-opensky-raw"
+
+validations:
+  - batch_request:
+      datasource_name: opensky_raw
+      data_connector_name: runtime_connector
+      data_asset_name: raw_positions_batch
+      batch_identifiers:
+        batch_id: default_identifier
+    expectation_suite_name: raw_positions_suite
+
+action_list:
+  - name: store_validation_result
+    action:
+      class_name: StoreValidationResultAction
+
+  - name: update_data_docs
+    action:
+      class_name: UpdateDataDocsAction
+      site_names:
+        - local_site
+
+ 

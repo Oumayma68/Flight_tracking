@@ -1,0 +1,31 @@
+# Checkpoint Great Expectations pour les tables marts Snowflake
+# Utilisé dans le DAG dag_dbt_transform.py 
+# Se connecte directement à Snowflake 
+
+name: checkpoint_facts
+config_version: 1.0
+class_name: SimpleCheckpoint
+run_name_template: "%Y%m%d-%H%M%S-fact-positions"
+
+validations:
+  - batch_request:
+      datasource_name: snowflake_marts
+      data_connector_name: default_inferred_data_connector
+      data_asset_name: raw_marts.fact_positions
+      # Limiter aux données des dernières 2 heures pour la performance
+      batch_spec_passthrough:
+        sampling_method: "_sample_using_limit"
+        sampling_kwargs:
+          n: 50000
+    expectation_suite_name: fact_positions_suite
+
+action_list:
+  - name: store_validation_result
+    action:
+      class_name: StoreValidationResultAction
+
+  - name: update_data_docs
+    action:
+      class_name: UpdateDataDocsAction
+      site_names:
+        - local_site

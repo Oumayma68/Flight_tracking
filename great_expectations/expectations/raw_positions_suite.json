@@ -1,0 +1,118 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "raw_positions_suite",
+  "expectations": [
+
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 50,
+        "max_value": 1500
+      },
+      "meta": {
+        "notes": "Entre 50 et 1500 avions au-dessus de la France selon l'heure. Moins = API down, plus = bug de duplication"
+      }
+    },
+
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": { "column": "icao24" }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": { "column": "latitude" }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": { "column": "longitude" }
+    },
+    {
+      "expectation_type": "expect_column_to_exist",
+      "kwargs": { "column": "baro_altitude" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "icao24" },
+      "meta": { "notes": "L'identifiant ICAO est obligatoire pour la déduplication" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "latitude",
+        "mostly": 0.95
+      },
+      "meta": { "notes": "5% de positions manquantes tolérées (perte de signal normale)" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "latitude",
+        "min_value": 41.0,
+        "max_value": 51.5,
+        "mostly": 0.99
+      },
+      "meta": { "notes": "Latitude dans les limites France métropolitaine" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "longitude",
+        "min_value": -5.5,
+        "max_value": 10.0,
+        "mostly": 0.99
+      },
+      "meta": { "notes": "Longitude dans les limites France métropolitaine" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "baro_altitude",
+        "min_value": 0,
+        "max_value": 15000,
+        "mostly": 0.95
+      },
+      "meta": { "notes": "Altitude en mètres — max ~15000m soit ~49000 pieds (plafond réaliste)" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "vitesse",
+        "min_value": 0,
+        "max_value": 340,
+        "mostly": 0.99
+      },
+      "meta": { "notes": "Vitesse en m/s — max Mach 1 (~340 m/s)" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_match_regex",
+      "kwargs": {
+        "column": "icao24",
+        "regex": "^[0-9a-f]{6}$",
+        "mostly": 0.95
+      },
+      "meta": { "notes": "ICAO24 = 6 caractères hexadécimaux en minuscules" }
+    },
+
+    {
+      "expectation_type": "expect_column_proportion_of_unique_values_to_be_between",
+      "kwargs": {
+        "column": "icao24",
+        "min_value": 0.3,
+        "max_value": 1.0
+      },
+      "meta": { "notes": "Au moins 30% d'avions uniques dans un batch (le reste = doublons ADS-B normaux)" }
+    }
+
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.15",
+    "notes": "Suite de validation pour les données brutes OpenSky avant insertion Snowflake"
+  }
+}

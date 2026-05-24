@@ -1,0 +1,14 @@
+# dbt 
+dbt_project/target/
+dbt_project/logs/
+dbt_project/dbt_packages/
+dbt_project/.user.yml
+dbt_project/profiles.yml
+
+#  Great Expectations 
+great_expectations/uncommitted/
+**/.ge_store_backend_id
+
+#  Python cache 
+ingestion/__pycache__/
+ingestion/*.pyc

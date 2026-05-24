@@ -1,0 +1,104 @@
+version: 2
+
+models:
+
+  - name: dim_vols
+    description: "Référentiel des appareils — un avion = une ligne"
+    columns:
+
+      - name: vol_sk
+        description: "Surrogate key (SHA256 de icao24)"
+        tests:
+          - not_null
+          - unique
+
+      - name: icao24
+        description: "Identifiant ICAO 24 bits"
+        tests:
+          - not_null
+          - unique
+
+      - name: origine_pays
+        description: "Pays d'immatriculation de l'appareil"
+        tests:
+          - not_null
+
+  - name: fact_positions
+    description: >
+      Table de faits principale — chaque ligne représente la position
+      d'un avion à un instant T (fenêtre 30 secondes, dédupliquée).
+    columns:
+
+      - name: position_sk
+        description: "Surrogate key unique de la position"
+        tests:
+          - not_null
+          - unique
+
+      - name: vol_sk
+        description: "Clé étrangère → dim_vols"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vols')
+              field: vol_sk
+
+      - name: timestamp_utc
+        description: "Timestamp UTC de la position"
+        tests:
+          - not_null
+
+      - name: latitude
+        description: "Latitude GPS"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 41.0
+              max_value: 51.5
+
+      - name: longitude
+        description: "Longitude GPS"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -5.5
+              max_value: 10.0
+
+      - name: altitude_baro_ft
+        description: "Altitude barométrique en pieds"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -200
+              max_value: 60000
+              severity: warn 
+      - name: vitesse_kmh
+        description: "Vitesse sol en km/h"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 1200
+
+      - name: tranche_vol
+        description: "Tranche de vol (SOL, BASSE_ALTITUDE, CROISIERE_HAUTE...)"
+        tests:
+          - accepted_values:
+              values:
+                - 'SOL'
+                - 'BASSE_ALTITUDE'
+                - 'TRANSITION'
+                - 'CROISIERE_BASSE'
+                - 'CROISIERE_HAUTE'
+                - 'TRES_HAUTE_ALTITUDE'
+
+      - name: phase_vol
+        description: "Phase de vol estimée"
+        tests:
+          - accepted_values:
+              values:
+                - 'SOL'
+                - 'DECOLLAGE'
+                - 'MONTEE'
+                - 'CROISIERE'
+                - 'DESCENTE'
+                - 'ATTERRISSAGE'
+                - 'TRANSITION'

@@ -1,0 +1,57 @@
+name: 'flight_tracking'
+version: '1.0.0'
+config-version: 2
+
+profile: 'flight_tracking'
+
+# Répertoires
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configuration des modèles par couche
+models:
+  flight_tracking:
+
+    #  Couche 1 : Staging
+    # Nettoyage et typage des données brutes
+    staging:
+      +materialized: view          # Vue : recalculée à chaque requête, pas de stockage
+      +schema: STAGING
+      +tags: ["staging"]
+
+    # ── Couche 2 : Intermediate 
+    # Déduplication et enrichissement
+    intermediate:
+      +materialized: incremental   # Incrémental : n'ajoute que les nouvelles lignes
+      +schema: STAGING
+      +tags: ["intermediate"]
+      +unique_key: "position_id"
+
+    # ── Couche 3 : Marts (Star Schema) 
+    # Tables finales consommées par Streamlit
+    marts:
+      +materialized: table         # Table physique : optimisée pour les requêtes Metabase
+      +schema: MARTS
+      +tags: ["marts", "star-schema"]
+      dim_vols:
+        +materialized: incremental
+        +unique_key: "vol_sk"
+      dim_aeroports:
+        +materialized: table
+      fact_positions:
+        +materialized: incremental
+        +unique_key: "position_sk"
+        +cluster_by: ["vol_sk", "timestamp_utc::DATE"]  # Optimisation Snowflake
+
+vars:
+  # Fenêtre de traitement incrémental (en heures)
+  incremental_lookback_hours: 2

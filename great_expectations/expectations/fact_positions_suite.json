@@ -1,0 +1,135 @@
+{
+  "data_asset_type": null,
+  "expectation_suite_name": "fact_positions_suite",
+  "expectations": [
+
+    {
+      "expectation_type": "expect_table_row_count_to_be_between",
+      "kwargs": {
+        "min_value": 1,
+        "max_value": 10000000
+      },
+      "meta": {
+        "notes": "La table fact_positions doit contenir au moins 1 ligne après le premier run dbt"
+      }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "position_sk" }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "vol_sk" }
+    },
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": { "column": "timestamp_utc" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_unique",
+      "kwargs": { "column": "position_sk" },
+      "meta": { "notes": "Chaque position doit être unique — test de déduplication" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "altitude_baro_ft",
+        "min_value": -500,
+        "max_value": 60000,
+        "mostly": 0.99
+      },
+      "meta": { "notes": "Altitude en pieds — plage réaliste pour l'aviation civile" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "vitesse_kmh",
+        "min_value": 0,
+        "max_value": 1200,
+        "mostly": 0.99
+      },
+      "meta": { "notes": "Vitesse en km/h — max Mach 1 (~1200 km/h)" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "tranche_vol",
+        "value_set": [
+          "SOL",
+          "BASSE_ALTITUDE",
+          "TRANSITION",
+          "CROISIERE_BASSE",
+          "CROISIERE_HAUTE",
+          "TRES_HAUTE_ALTITUDE"
+        ]
+      },
+      "meta": { "notes": "Toutes les tranches de vol doivent être dans l'enum défini" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_in_set",
+      "kwargs": {
+        "column": "phase_vol",
+        "value_set": [
+          "SOL",
+          "DECOLLAGE",
+          "MONTEE",
+          "CROISIERE",
+          "DESCENTE",
+          "ATTERRISSAGE",
+          "TRANSITION"
+        ]
+      }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "latitude",
+        "min_value": 41.0,
+        "max_value": 51.5
+      },
+      "meta": { "notes": "Après déduplication, toutes les coords doivent être dans la bbox France" }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_be_between",
+      "kwargs": {
+        "column": "longitude",
+        "min_value": -5.5,
+        "max_value": 10.0
+      }
+    },
+
+    {
+      "expectation_type": "expect_column_proportion_of_unique_values_to_be_between",
+      "kwargs": {
+        "column": "vol_sk",
+        "min_value": 0.001,
+        "max_value": 0.5
+      },
+      "meta": {
+        "notes": "Un vol_sk apparaît plusieurs fois (plusieurs positions). Ratio trop élevé = anomalie"
+      }
+    },
+
+    {
+      "expectation_type": "expect_column_values_to_not_be_null",
+      "kwargs": {
+        "column": "flag_changement_altitude_suspect",
+        "mostly": 1.0
+      },
+      "meta": { "notes": "Le flag qualité ne doit jamais être NULL" }
+    }
+
+  ],
+  "meta": {
+    "great_expectations_version": "0.18.15",
+    "notes": "Suite de validation pour les tables marts (Star Schema) après transformation dbt"
+  }
+}

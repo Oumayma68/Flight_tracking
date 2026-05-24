@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: raw
+    database: FLIGHT_TRACKING
+    schema: RAW
+    tables:
+      - name: FLIGHT_POSITIONS
+        description: "Positions brutes des avions ingérées depuis OpenSky Network"
+
+models:
+  - name: stg_positions
+    description: >
+      Positions de vol nettoyées et typées.
+      Inclut des flags de qualité pour identifier les données suspectes.
+    columns:
+
+      - name: position_id_raw
+        description: "Hash SHA256 unique : icao24 + time_position + coords"
+        tests:
+          - not_null
+          - unique
+
+      - name: icao24
+        description: "Identifiant ICAO 24 bits de l'appareil (hex)"
+        tests:
+          - not_null
+
+      - name: latitude
+        description: "Latitude GPS en degrés décimaux"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 41.0    # Limite sud France
+              max_value: 51.5    # Limite nord France
+              inclusive: true
+
+      - name: longitude
+        description: "Longitude GPS en degrés décimaux"
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: -5.5    # Limite ouest France
+              max_value: 10.0    # Limite est France
+              inclusive: true
+
+      - name: altitude_baro_ft
+        description: "Altitude barométrique en pieds"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: -200    # Un peu sous 0 pour les approches
+              max_value: 60000   # Plafond absolu
+              inclusive: true
+              severity: warn
+      - name: vitesse_ms
+        description: "Vitesse sol en m/s"
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+              max_value: 340     # ~Mach 1
+              inclusive: true
+
+      - name: timestamp_position_utc
+        description: "Timestamp UTC de la position"
+        tests:
+          - not_null
