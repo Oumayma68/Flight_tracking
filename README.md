@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is an end-to-end data engineering pipeline that collects, processes, and analyzes **live aircraft positions over France** from the **OpenSky Network API**. It demonstrates how to build a production-grade pipeline with:
+This project is an end-to-end data engineering pipeline that collects, processes, and analyzes **live aircraft positions over France** from the **OpenSky Network API**. It demonstrates how to build a pipeline with:
 
 - Near real-time ADS-B data ingestion every 10 minutes
 - Workflow orchestration with Apache Airflow (two independent DAGs)
