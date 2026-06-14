@@ -21,13 +21,14 @@ flowchart TD
     C --> D["Airflow\nDAG dbt\n⏱ every hour"]
     D --> E["dbt\nStar Schema\nMARTS Layer"]
     E --> F["Great Expectations\nQuality Checks"]
-
+    E --> G["Streamlit\nDashboard"]
     style A fill:#FFF3E0,stroke:#E65100,stroke-width:2px,color:#333
     style B fill:#E3F2FD,stroke:#01579B,stroke-width:2px,color:#333
     style C fill:#E8F5E9,stroke:#1B5E20,stroke-width:2px,color:#333
     style D fill:#E3F2FD,stroke:#01579B,stroke-width:2px,color:#333
     style E fill:#FFEBEE,stroke:#BF360C,stroke-width:2px,color:#333
     style F fill:#FFF8E1,stroke:#F57F17,stroke-width:2px,color:#333
+    style G fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px,color:#333
 ```
 
 ---
@@ -102,8 +103,14 @@ This pipeline enables answering questions such as:
 - How does traffic volume evolve throughout the day and week?
 
 ---
-
-## How to Run
+## Dashboard
+ 
+An interactive **Streamlit** dashboard provides near real-time monitoring of aircraft over France:
+ 
+- **Live KPIs** — number of aircraft in flight, active airlines, average altitude and speed, active anomalies
+- **Interactive map** — aircraft positions with heading, altitude, speed and flight phase, color-coded by phase
+- **Anomaly detection** — flags aircraft with suspicious altitude variation (mismatch between computed and reported climb rate)
+---
 
 ### 1. Configure Airflow Variables
 
@@ -131,6 +138,24 @@ Create a connection named `FT_snowflake_default` with:
 - Activate `dag_ingest_flights` → runs every **10 minutes**
 - Activate `dag_dbt_transform_main` → runs every **hour**
 
+### 4. Run the dashboard
+
+Create a `.env` file in the streamlit folder with your Snowflake credentials:
+ 
+```
+SNOWFLAKE_USER=your_user
+SNOWFLAKE_PASSWORD=your_password
+SNOWFLAKE_ACCOUNT=your_account
+SNOWFLAKE_DATABASE=FLIGHT_TRACKING
+SNOWFLAKE_WAREHOUSE=COMPUTE_WH
+SNOWFLAKE_ROLE=ACCOUNTADMIN
+```
+Install the requirements and run the dashboard
+```bash
+pip install -r requirements.txt
+streamlit run dashboard.py
+```
+
 ---
 
 ## Results
@@ -143,3 +168,6 @@ Create a connection named `FT_snowflake_default` with:
 [![ft4.png](https://i.postimg.cc/qRrfgPXB/ft4.png)](https://postimg.cc/B8m7VwVR)
 [![ft5.png](https://i.postimg.cc/MTmCB9dJ/ft5.png)](https://postimg.cc/47n2kbDW)
 [![ft6.png](https://i.postimg.cc/85m2vZtD/ft6.png)](https://postimg.cc/JDtYVcfd)
+
+### Streamlit Dashboard 
+[Watch Demo](https://github.com/user-attachments/assets/f0ed8859-9416-4977-9b7a-a074a2f693cf)
