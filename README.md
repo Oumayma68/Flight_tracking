@@ -160,7 +160,7 @@ streamlit run dashboard.py
 
 ## Results
 
-### Airflow DAG
+### Airflow DAGS
 [![ft1.png](https://i.postimg.cc/NMdX5cqm/ft1.png)](https://postimg.cc/ZBynMXq5)
 [![ft2.png](https://i.postimg.cc/pXwF9C79/ft2.png)](https://postimg.cc/XpgJmfn3)
 
