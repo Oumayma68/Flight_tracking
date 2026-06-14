@@ -18,7 +18,6 @@ GE_PATH = "/opt/airflow/projects/flight_tracking/great_expectations"
 MARTS_TABLES = [
     "RAW_MARTS.FACT_POSITIONS",
     "RAW_MARTS.DIM_VOLS",
-    "RAW_MARTS.DIM_AEROPORTS",
 ]
 
 

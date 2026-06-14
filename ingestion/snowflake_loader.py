@@ -27,15 +27,15 @@ class SnowflakeLoader:
     def __init__(self):
         #  Tous les credentials depuis Airflow Variables
          self.config = {
-         "account":   os.environ.get("SNOWFLAKE_ACCOUNT"),
-    	 "user":      os.environ.get("SNOWFLAKE_USER"),
-    	 "password":  os.environ.get("SNOWFLAKE_PASSWORD"),
-    	 "database":  os.environ.get("SNOWFLAKE_DATABASE",  "FLIGHT_TRACKING"),
-    	 "warehouse": os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
-    	 "schema":    os.environ.get("SNOWFLAKE_SCHEMA",    "RAW"),
-    	 "role":      os.environ.get("SNOWFLAKE_ROLE",      "ACCOUNTADMIN"),
-        }
-        self._conn = None
+             "account":   os.environ.get("SNOWFLAKE_ACCOUNT"),
+    	     "user":      os.environ.get("SNOWFLAKE_USER"),
+    	     "password":  os.environ.get("SNOWFLAKE_PASSWORD"),
+    	     "database":  os.environ.get("SNOWFLAKE_DATABASE",  "FLIGHT_TRACKING"),
+    	     "warehouse": os.environ.get("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH"),
+    	     "schema":    os.environ.get("SNOWFLAKE_SCHEMA",    "RAW"),
+    	     "role":      os.environ.get("SNOWFLAKE_ROLE",      "ACCOUNTADMIN"),
+         }
+         self._conn = None
 
     # Gestion connexion 
 

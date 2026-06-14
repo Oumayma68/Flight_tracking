@@ -12,3 +12,4 @@ great_expectations/uncommitted/
 #  Python cache 
 ingestion/__pycache__/
 ingestion/*.pyc
+streamlit/.env

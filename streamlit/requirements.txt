@@ -1,0 +1,7 @@
+streamlit
+folium
+streamlit-folium
+snowflake-sqlalchemy
+sqlalchemy
+pandas
+python-dotenv
